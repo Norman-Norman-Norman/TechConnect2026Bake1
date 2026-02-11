@@ -10,6 +10,7 @@ import orderRoutes from './routes/order';
 import branchRoutes from './routes/branch';
 import headquartersRoutes from './routes/headquarters';
 import supplierRoutes from './routes/supplier';
+import reviewRoutes from './routes/review';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -69,6 +70,7 @@ app.use(express.json());
 app.use('/api/deliveries', deliveryRoutes);
 app.use('/api/order-detail-deliveries', orderDetailDeliveryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/products/:productId', reviewRoutes);
 app.use('/api/order-details', orderDetailRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/branches', branchRoutes);
