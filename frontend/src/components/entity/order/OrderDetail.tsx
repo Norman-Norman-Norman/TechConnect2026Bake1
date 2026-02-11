@@ -203,7 +203,7 @@ export default function OrderDetailView() {
               </p>
             </div>
             <div className="text-right">
-              <div className={`text-3xl font-bold ${darkMode ? 'text-primary' : 'text-primary'} transition-colors duration-300`}>
+              <div className="text-3xl font-bold text-primary transition-colors duration-300">
                 ${orderTotal.toFixed(2)}
               </div>
               <button
@@ -297,13 +297,20 @@ export default function OrderDetailView() {
                       <div className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} transition-colors duration-300`}>
                         ${detail.unitPrice.toFixed(2)} × {detail.quantity}
                       </div>
-                      <div className={`text-lg font-bold ${darkMode ? 'text-primary' : 'text-primary'} transition-colors duration-300`}>
+                      <div className="text-lg font-bold text-primary transition-colors duration-300">
                         ${lineTotal.toFixed(2)}
                       </div>
-                      {product && product.price !== detail.unitPrice && (
-                        <div className={`text-xs ${darkMode ? 'text-yellow-400' : 'text-yellow-600'} mt-1 transition-colors duration-300`}>
-                          Current price: ${product.price.toFixed(2)}
-                        </div>
+                      {product && (
+                        (() => {
+                          const currentPrice = product.discount 
+                            ? product.price * (1 - product.discount)
+                            : product.price;
+                          return currentPrice !== detail.unitPrice && (
+                            <div className={`text-xs ${darkMode ? 'text-yellow-400' : 'text-yellow-600'} mt-1 transition-colors duration-300`}>
+                              Current price: ${currentPrice.toFixed(2)}
+                            </div>
+                          );
+                        })()
                       )}
                     </div>
                   </div>
@@ -317,7 +324,7 @@ export default function OrderDetailView() {
                 <span className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>
                   Total
                 </span>
-                <span className={`text-2xl font-bold ${darkMode ? 'text-primary' : 'text-primary'} transition-colors duration-300`}>
+                <span className="text-2xl font-bold text-primary transition-colors duration-300">
                   ${orderTotal.toFixed(2)}
                 </span>
               </div>

@@ -141,7 +141,7 @@ export default function OrderHistory() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-2xl font-bold ${darkMode ? 'text-primary' : 'text-primary'} transition-colors duration-300`}>
+                    <div className="text-2xl font-bold text-primary transition-colors duration-300">
                       ${getOrderTotal(order.orderId).toFixed(2)}
                     </div>
                   </div>
