@@ -9,8 +9,35 @@
  * @swagger
  * /api/products:
  *   get:
- *     summary: Returns all products
+ *     summary: Returns all products with optional filtering and sorting
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter by category (e.g., "Feeding & Hydration")
+ *       - in: query
+ *         name: supplier
+ *         schema:
+ *           type: integer
+ *         description: Filter by supplier ID
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [price_asc, price_desc, name, newest]
+ *         description: Sort order (price_asc, price_desc, name, newest)
  *     responses:
  *       200:
  *         description: List of all products
@@ -114,9 +141,68 @@ router.post('/', (req, res) => {
   res.status(201).json(newProduct);
 });
 
-// Get all products
+// Get all products with optional filtering and sorting
 router.get('/', (req, res) => {
-  res.json(products);
+  let filteredProducts = [...products];
+
+  // Filter by category
+  if (req.query.category) {
+    const category = req.query.category as string;
+    filteredProducts = filteredProducts.filter(p => p.category === category);
+  }
+
+  // Filter by supplier
+  if (req.query.supplier) {
+    const supplierId = parseInt(req.query.supplier as string);
+    filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
+  }
+
+  // Filter by price range
+  if (req.query.minPrice) {
+    const minPrice = parseFloat(req.query.minPrice as string);
+    filteredProducts = filteredProducts.filter(p => {
+      const effectivePrice = p.discount ? p.price * (1 - p.discount) : p.price;
+      return effectivePrice >= minPrice;
+    });
+  }
+
+  if (req.query.maxPrice) {
+    const maxPrice = parseFloat(req.query.maxPrice as string);
+    filteredProducts = filteredProducts.filter(p => {
+      const effectivePrice = p.discount ? p.price * (1 - p.discount) : p.price;
+      return effectivePrice <= maxPrice;
+    });
+  }
+
+  // Sort products
+  if (req.query.sort) {
+    const sort = req.query.sort as string;
+    switch (sort) {
+      case 'price_asc':
+        filteredProducts.sort((a, b) => {
+          const priceA = a.discount ? a.price * (1 - a.discount) : a.price;
+          const priceB = b.discount ? b.price * (1 - b.discount) : b.price;
+          return priceA - priceB;
+        });
+        break;
+      case 'price_desc':
+        filteredProducts.sort((a, b) => {
+          const priceA = a.discount ? a.price * (1 - a.discount) : a.price;
+          const priceB = b.discount ? b.price * (1 - b.discount) : b.price;
+          return priceB - priceA;
+        });
+        break;
+      case 'name':
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'newest':
+        // For now, newest is by productId descending (assuming higher IDs are newer)
+        filteredProducts.sort((a, b) => b.productId - a.productId);
+        break;
+    }
+  }
+
+  res.json(filteredProducts);
 });
 
 // Get a product by ID

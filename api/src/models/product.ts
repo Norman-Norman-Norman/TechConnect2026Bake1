@@ -8,6 +8,7 @@
  *         - productId
  *         - name
  *         - price
+ *         - category
  *       properties:
  *         productId:
  *           type: integer
@@ -32,6 +33,9 @@
  *           type: number
  *           format: float
  *           description: Discount percentage (if applicable) expressed as a decimal (e.g., 0.25 for 25%)
+ *         category:
+ *           type: string
+ *           description: Product category (e.g., "Feeding & Hydration", "Smart Monitoring")
  */
 export interface Product {
     productId: number;
@@ -42,5 +46,6 @@ export interface Product {
     sku: string;
     unit: string;
     imgName: string;
+    category: string;
     discount?: number;
 }
