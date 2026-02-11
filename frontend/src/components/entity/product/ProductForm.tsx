@@ -17,6 +17,7 @@ interface Product {
   sku: string;
   unit: string;
   imgName: string;
+  category: string;
   discount?: number;
 }
 
@@ -37,7 +38,8 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       sku: '',
       unit: '',
       supplierId: suppliers[0]?.supplierId || 0,
-      imgName: ''
+      imgName: '',
+      category: 'Feeding & Hydration'
     }
   );
 
@@ -137,6 +139,21 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
                   {supplier.name}
                 </option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Category</label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              required
+            >
+              <option value="Feeding & Hydration">Feeding & Hydration</option>
+              <option value="Smart Monitoring">Smart Monitoring</option>
+              <option value="Interactive Entertainment">Interactive Entertainment</option>
+              <option value="Comfort & Wellness">Comfort & Wellness</option>
+              <option value="Grooming & Care">Grooming & Care</option>
             </select>
           </div>
           <div>

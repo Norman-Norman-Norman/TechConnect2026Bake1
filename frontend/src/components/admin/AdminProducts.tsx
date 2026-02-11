@@ -24,6 +24,7 @@ interface Product {
   sku: string;
   unit: string;
   imgName: string;
+  category: string;
   supplier?: Supplier;
   discount?: number;
 }
@@ -140,6 +141,11 @@ export default function AdminProducts() {
                 Supplier {renderSortIcon('supplier')}
               </th>
               <th 
+                className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`}
+              >
+                Category
+              </th>
+              <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('price')}
               >
@@ -175,6 +181,7 @@ export default function AdminProducts() {
               <tr key={product.productId} className={`hover:${darkMode ? 'bg-gray-800' : 'bg-gray-100'} transition-colors duration-300`}>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>{product.name}</td>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>{product.supplier?.name || 'Unknown'}</td>
+                <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>{product.category}</td>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>${product.price.toFixed(2)}</td>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>{product.sku}</td>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>{product.unit}</td>
