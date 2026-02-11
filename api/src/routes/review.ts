@@ -133,6 +133,8 @@ let reviews: Review[] = [...seedReviews];
 const isVerifiedPurchase = (authorName: string, productId: number): boolean => {
     // Simple check: if the author name appears in any order detail for this product
     // In a real app, this would use userId and proper order history
+    // TODO: Implement proper user authentication and order history verification
+    // For MVP, we'll mark as verified if the product has been ordered
     return seedOrderDetails.some(od => od.productId === productId);
 };
 

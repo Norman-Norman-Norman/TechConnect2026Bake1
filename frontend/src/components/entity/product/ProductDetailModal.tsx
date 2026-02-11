@@ -87,10 +87,11 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
       );
       setShowReviewForm(false);
       setReviewForm({ rating: 5, title: '', body: '', authorName: '' });
-      // Refresh reviews
-      window.location.reload();
+      // TODO: Implement toast notification system
+      // For now, we'll just close the form and the user will see their review appear
     } catch (error) {
       console.error('Error submitting review:', error);
+      // TODO: Replace with proper error notification UI
       alert('Failed to submit review. Please try again.');
     }
   };
