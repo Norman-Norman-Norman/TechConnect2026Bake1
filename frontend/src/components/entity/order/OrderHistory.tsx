@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
+import { getStatusColor } from '../../../utils/orderUtils';
 
 interface Order {
   orderId: number;
@@ -32,25 +33,6 @@ const fetchOrders = async (): Promise<Order[]> => {
 const fetchOrderDetails = async (): Promise<OrderDetail[]> => {
   const { data } = await axios.get(`${api.baseURL}${api.endpoints.orderDetails}`);
   return data;
-};
-
-const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
-    case 'pending':
-      return 'bg-yellow-500';
-    case 'processing':
-      return 'bg-blue-500';
-    case 'shipped':
-      return 'bg-purple-500';
-    case 'delivered':
-      return 'bg-green-500';
-    case 'completed':
-      return 'bg-green-600';
-    case 'cancelled':
-      return 'bg-red-500';
-    default:
-      return 'bg-gray-500';
-  }
 };
 
 export default function OrderHistory() {

@@ -6,6 +6,7 @@ import { api } from '../../../api/config';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+import { getStatusColor, getStatusSteps, pluralize } from '../../../utils/orderUtils';
 
 interface Order {
   orderId: number;
@@ -52,36 +53,6 @@ const fetchProducts = async (): Promise<Product[]> => {
   return data;
 };
 
-const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
-    case 'pending':
-      return 'bg-yellow-500';
-    case 'processing':
-      return 'bg-blue-500';
-    case 'shipped':
-      return 'bg-purple-500';
-    case 'delivered':
-      return 'bg-green-500';
-    case 'completed':
-      return 'bg-green-600';
-    case 'cancelled':
-      return 'bg-red-500';
-    default:
-      return 'bg-gray-500';
-  }
-};
-
-const getStatusSteps = (currentStatus: string): { label: string; active: boolean; completed: boolean }[] => {
-  const statuses = ['pending', 'processing', 'shipped', 'delivered'];
-  const currentIndex = statuses.indexOf(currentStatus.toLowerCase());
-  
-  return statuses.map((status, index) => ({
-    label: status.charAt(0).toUpperCase() + status.slice(1),
-    active: index === currentIndex,
-    completed: index < currentIndex,
-  }));
-};
-
 export default function OrderDetailView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -107,16 +78,23 @@ export default function OrderDetailView() {
 
   const orderDetails = allOrderDetails?.filter(detail => detail.orderId === Number(id)) || [];
 
+  useEffect(() => {
+    if (notification) {
+      const timeoutId = setTimeout(() => setNotification(''), 5000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [notification]);
+
   const handleReorder = () => {
     let addedCount = 0;
     let skippedCount = 0;
-    const skippedItems: string[] = [];
 
     orderDetails.forEach(detail => {
       const product = products?.find(p => p.productId === detail.productId);
       
       if (product) {
         // Use current price, not historical price
+        // Note: discount is stored as decimal (0.25 = 25% off)
         const currentPrice = product.discount 
           ? product.price * (1 - product.discount)
           : product.price;
@@ -131,17 +109,15 @@ export default function OrderDetailView() {
         addedCount++;
       } else {
         skippedCount++;
-        skippedItems.push(`Product ID ${detail.productId}`);
       }
     });
 
-    let message = `${addedCount} item${addedCount !== 1 ? 's' : ''} added to cart`;
+    let message = `${addedCount} ${pluralize(addedCount, 'item')} added to cart`;
     if (skippedCount > 0) {
-      message += `. ${skippedCount} unavailable item${skippedCount !== 1 ? 's were' : ' was'} skipped.`;
+      message += `. ${skippedCount} unavailable ${pluralize(skippedCount, 'item')} ${skippedCount === 1 ? 'was' : 'were'} skipped.`;
     }
     
     setNotification(message);
-    setTimeout(() => setNotification(''), 5000);
   };
 
   if (orderLoading || detailsLoading || productsLoading) {

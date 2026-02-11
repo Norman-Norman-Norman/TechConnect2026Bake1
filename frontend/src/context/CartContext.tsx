@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface CartItem {
   productId: number;
@@ -20,8 +20,28 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | null>(null);
 
+const CART_STORAGE_KEY = 'octocat-cart';
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    // Load initial state from localStorage
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error('Failed to load cart from localStorage:', error);
+      return [];
+    }
+  });
+
+  // Persist cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
+    }
+  }, [items]);
 
   const addToCart = (item: CartItem) => {
     setItems(prev => {
