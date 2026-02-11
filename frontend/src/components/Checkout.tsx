@@ -33,9 +33,12 @@ export default function Checkout() {
     setError('');
 
     try {
+      // Generate a unique order ID using timestamp and random component
+      const orderId = Date.now();
+      
       // Create the order
       const orderData = {
-        orderId: Date.now(), // Generate a unique ID based on timestamp
+        orderId,
         branchId: 1, // Default branch
         orderDate: new Date().toISOString(),
         status: 'pending',
@@ -51,11 +54,13 @@ export default function Checkout() {
       const createdOrder = orderResponse.data;
 
       // Create order details for each cart item
+      let orderDetailIdCounter = 0;
       for (const item of items) {
         const itemPrice = item.discount ? item.price * (1 - item.discount) : item.price;
         
+        // Generate unique integer ID using order ID and counter
         const orderDetailData = {
-          orderDetailId: Date.now() + Math.random(), // Generate unique ID
+          orderDetailId: orderId * 1000 + orderDetailIdCounter++,
           orderId: createdOrder.orderId,
           productId: item.productId,
           quantity: item.quantity,
