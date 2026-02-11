@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { getDeliveryInfo } from '../../../utils/deliveryDate';
 
 interface Product {
   productId: number;
@@ -129,7 +130,22 @@ export default function Products() {
                 
                 <div className="p-4 flex flex-col flex-grow">
                   <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}>{product.name}</h3>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-2 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  
+                  {/* Delivery Date Display */}
+                  {(() => {
+                    const deliveryInfo = getDeliveryInfo(product.supplierId);
+                    return (
+                      <p className={`text-sm mb-4 font-medium transition-colors duration-300 ${
+                        deliveryInfo.isSoon 
+                          ? 'text-green-600 dark:text-green-400' 
+                          : darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
+                        {deliveryInfo.displayText}
+                      </p>
+                    );
+                  })()}
+                  
                   <div className="space-y-4 mt-auto">
                     <div className="flex justify-between items-center">
                       {product.discount ? (
