@@ -265,6 +265,14 @@ export const deliveries: Delivery[] = [
         name: "WhiskerWare Entertainment Package",
         description: "Entertainment and tracking systems for feline companions",
         status: "in-transit"
+    },
+    {
+        deliveryId: 3,
+        supplierId: 3,
+        deliveryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
+        name: "CatNip Eco-Friendly Collection",
+        description: "Eco-friendly cat toys and accessories delivery",
+        status: "pending"
     }
 ];
 
