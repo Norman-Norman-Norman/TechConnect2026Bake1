@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import ProductRating from './ProductRating';
+import ProductDetailModal from './ProductDetailModal';
 
 interface Product {
   productId: number;
@@ -129,7 +131,11 @@ export default function Products() {
                 
                 <div className="p-4 flex flex-col flex-grow">
                   <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}>{product.name}</h3>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-2 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  
+                  {/* Rating Display */}
+                  <ProductRating productId={product.productId} />
+                  
                   <div className="space-y-4 mt-auto">
                     <div className="flex justify-between items-center">
                       {product.discount ? (
@@ -190,38 +196,12 @@ export default function Products() {
         </div>
       </div>
 
-      {/* Product Modal */}
+      {/* Product Detail Modal */}
       {showModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowModal(false)}>
-          <div 
-            className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl transition-colors duration-300`}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex justify-end">
-              <button 
-                onClick={() => setShowModal(false)}
-                className={`${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300`}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className={`${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} rounded-lg mb-6 p-4`}>
-              <img 
-                src={`/${selectedProduct.imgName}`} 
-                alt={selectedProduct.name}
-                className="w-full h-auto object-contain max-h-[400px]"
-              />
-            </div>
-            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
-              {selectedProduct.name}
-            </h2>
-            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
-              {selectedProduct.description}
-            </p>
-          </div>
-        </div>
+        <ProductDetailModal 
+          product={selectedProduct}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </div>
   );

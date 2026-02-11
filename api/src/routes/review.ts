@@ -116,10 +116,14 @@
  *                       type: integer
  */
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { Review } from '../models/review';
 import { reviews as seedReviews } from '../seedData';
 import { orderDetails as seedOrderDetails } from '../seedData';
+
+interface RouteParams {
+  productId: string;
+}
 
 const router = express.Router({ mergeParams: true });
 
@@ -147,7 +151,7 @@ const sortReviews = (reviewList: Review[], sortBy?: string): Review[] => {
 };
 
 // Get all reviews for a product
-router.get('/reviews', (req, res) => {
+router.get<RouteParams>('/reviews', (req, res) => {
     const productId = parseInt(req.params.productId);
     const sortBy = req.query.sort as string;
     
@@ -158,28 +162,32 @@ router.get('/reviews', (req, res) => {
 });
 
 // Submit a new review
-router.post('/reviews', (req, res) => {
+router.post<RouteParams>('/reviews', (req, res) => {
     const productId = parseInt(req.params.productId);
     const { rating, title, body, authorName } = req.body;
     
     // Validation
     if (!rating || !title || !body || !authorName) {
-        return res.status(400).json({ 
+        res.status(400).json({ 
             error: 'Missing required fields',
             required: ['rating', 'title', 'body', 'authorName']
         });
+        return;
     }
     
     if (rating < 1 || rating > 5) {
-        return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        return;
     }
     
     if (title.length > 100) {
-        return res.status(400).json({ error: 'Title must be 100 characters or less' });
+        res.status(400).json({ error: 'Title must be 100 characters or less' });
+        return;
     }
     
     if (body.length > 2000) {
-        return res.status(400).json({ error: 'Body must be 2000 characters or less' });
+        res.status(400).json({ error: 'Body must be 2000 characters or less' });
+        return;
     }
     
     // Create new review
@@ -200,16 +208,17 @@ router.post('/reviews', (req, res) => {
 });
 
 // Get rating summary for a product
-router.get('/rating-summary', (req, res) => {
+router.get<RouteParams>('/rating-summary', (req, res) => {
     const productId = parseInt(req.params.productId);
     const productReviews = reviews.filter(r => r.productId === productId);
     
     if (productReviews.length === 0) {
-        return res.json({
+        res.json({
             averageRating: 0,
             totalReviews: 0,
             distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
         });
+        return;
     }
     
     // Calculate average rating

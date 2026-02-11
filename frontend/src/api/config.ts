@@ -43,6 +43,8 @@ export const api = {
         headquarters: '/api/headquarters',
         deliveries: '/api/deliveries',
         orderDetails: '/api/order-details',
-        orderDetailDeliveries: '/api/order-detail-deliveries'
+        orderDetailDeliveries: '/api/order-detail-deliveries',
+        reviews: (productId: number) => `/api/products/${productId}/reviews`,
+        ratingSummary: (productId: number) => `/api/products/${productId}/rating-summary`
     }
 };
