@@ -196,7 +196,7 @@ router.get('/', (req, res) => {
         filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'newest':
-        // For now, newest is by productId descending (assuming higher IDs are newer)
+        // Sort by productId descending (assuming higher IDs are newer)
         filteredProducts.sort((a, b) => b.productId - a.productId);
         break;
     }
