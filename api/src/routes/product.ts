@@ -102,6 +102,7 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { products as seedProducts } from '../seedData';
+import { calculateDeliveryDate, formatDeliveryDate, isWithinDays } from '../utils/deliveryDate';
 
 const router = express.Router();
 
@@ -117,6 +118,28 @@ router.post('/', (req, res) => {
 // Get all products
 router.get('/', (req, res) => {
   res.json(products);
+});
+
+// Get delivery estimate for a product
+router.get('/:id/delivery-estimate', (req, res) => {
+  const product = products.find(p => p.productId === parseInt(req.params.id));
+  if (!product) {
+    res.status(404).send('Product not found');
+    return;
+  }
+
+  const deliveryDate = calculateDeliveryDate(product.supplierId);
+  const formattedDate = formatDeliveryDate(deliveryDate);
+  const isSoon = isWithinDays(deliveryDate, 3);
+
+  res.json({
+    productId: product.productId,
+    supplierId: product.supplierId,
+    estimatedDeliveryDate: deliveryDate.toISOString(),
+    formattedDate,
+    displayText: `Arrives by ${formattedDate}`,
+    isSoon
+  });
 });
 
 // Get a product by ID
